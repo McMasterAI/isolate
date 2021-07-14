@@ -1,9 +1,3 @@
-<style>
-y { color: #ff9900 }
-g { color: #00cc66 }
-</style>
-
-
 # Wave-U-Net
 
 
@@ -13,7 +7,7 @@ g { color: #00cc66 }
 This model is built off of the [U-Net](https://en.wikipedia.org/wiki/U-Net) architecture.
 
 - CNN
-- An <y>encoder</y>, followed by a <g>decoder</g>.
+- An *encoder*, followed by a *decoder*.
 - Encoder
   - Successive downsampling to encode the input into feature representations of the original input.
 - Decoder
