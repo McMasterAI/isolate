@@ -1,2 +1,13 @@
-# MacAI-Projects-Template
-This is the template repo for Mac AI Project Teams.
+# Isolate - Acapella Extraction
+
+## About the Project
+
+## Goal
+
+## Installation
+
+## Usage
+
+## License
+
+## Acknowledgements
