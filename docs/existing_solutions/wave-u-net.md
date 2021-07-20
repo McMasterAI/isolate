@@ -62,6 +62,10 @@ To solve this, they used linear interpolation, ensuring temporal continuity and 
 ## Evaluation Metrics & Performance
 
 ## Tools & Libraries 
+- [PyTorch Implementation](https://github.com/f90/Wave-U-Net-Pytorch)
+- [TensorFlow Implementation](https://github.com/satvik-venkatesh/Wave-U-net-TF2)
+- [libsndfile](http://mega-nerd.com/libsndfile/)
+- [ffmpeg](https://www.ffmpeg.org/)
 
 #### Sources
 - [Wave-U-Net Paper](https://arxiv.org/pdf/1806.03185.pdf)
