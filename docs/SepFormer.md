@@ -1,10 +1,3 @@
-<style>
-math {
-    font-family: "Cambria Math";
-    font-style: italic;
-}
-</style>
-
 # SepFormer
 
 ## Introduction
@@ -30,7 +23,7 @@ A high level diagram of SepFormer:
 
 - The encoder takes in a time-domain mixture-signal (to represent mixed source, raw audio), and uses a representation similar to a short-time Fourier transform using a single convolutional layer:
 
-    - <math>h = ReLU(conv1d(x))</math>
+    - h = ReLU(conv1d(x))
 
 - The encoder is an essential part because self-attention has quadratic complexity with respect to the length of the input vector, so a more efficient data representation is needed.
 
@@ -39,9 +32,9 @@ A high level diagram of SepFormer:
 ### Masking Network
 ![Detailed architecture](./sepformer_detailed_structure.png)
 
-- The masking network is fed with this encoded representation (previously denoted <math>h</math>) and estimates a mask for each of the speakers in the mixture
+- The masking network is fed with this encoded representation (previously denoted h) and estimates a mask for each of the speakers in the mixture
 
-- The encoded input <math>h</math> is then normalized with layer normalization and processed by a linear layer
+- The encoded input h is then normalized with layer normalization and processed by a linear layer
 
 - A chunking operation is performed, splitting the input at fixed time intervals and putting them in parallel
 ![Chunking](./sepformer_chunking.png)
@@ -52,13 +45,13 @@ A high level diagram of SepFormer:
 
 - The OverlapAdd block practically undoes the chunking operation
 
-- In the best models, the SepFormer masking network processes chunks of size <math>C</math> = 250 with a 50% overlap between them and employs <math>K</math> = 8 layers of transformers in both the IntraTransformer and InterTransformer blocks. The IntraT-InterT dual-path processing pipeline is repeated N = 2 times. 8 parallel attention heads were used, and 1024-dimensional feedforward networks used within each transformer layer.
+- In the best models, the SepFormer masking network processes chunks of size C = 250 with a 50% overlap between them and employs K = 8 layers of transformers in both the IntraTransformer and InterTransformer blocks. The IntraT-InterT dual-path processing pipeline is repeated N = 2 times. 8 parallel attention heads were used, and 1024-dimensional feedforward networks used within each transformer layer.
 
 ### Decoder
 
 - Simply uses a transposed CNN layer with the same stride and kernel size of the encoder
 
-- The input to the decoder is the element-wise multiplication between the mask <i class="math">m<sub>k</sub></i> of the source <i class="math">k</i>
+- The input to the decoder is the element-wise multiplication between the mask m<sub>k</sub> of the source k
 
 The Adam algorithm was used as the model optimizer, with a learning rate of 15×10<sup>-5</sup>. After epoch 65 (or epoch 100 with dynamic mixing), the learning rate is halved if no improvement of the validation performance is observed after 3 consecutive epochs (or 5 epochs with dynamic mixing). During training, a batch size of 1 was used. The system is trained for a maximum of 200 epochs.
 
@@ -77,8 +70,6 @@ In the WSJ0-2mix and WSJ0-3mix datasets, mixtures of two speakers and three spea
 The authors explored the use of dynamic mixing data augmentation, consisting of the creation of new mixtures from single speaker sources. Also, they expanded this powerful technique by applying a random speed perturbation before mixing them. The speed randomly changes between 95% and 105% the original speed.
 
 ## Evaluation Metrics & Performance
-
-- Processes all time steps in parallel and still achieves competitive performance when downsampling the encoded representation by a factor of 8
 
 On the WSJ0-2mix dataset, SepFormer achieves an SI-SNR improvement of 22.3 dB and a Signal-to-Distortion Ratio improvement of 22.4 dB on the test-set with dynamic mixing.
 
