@@ -26,10 +26,6 @@ A high level diagram of SepFormer:
 
 ![High-level diagram of SepFormer](./sepformer_high_level.png)
 
-A more detailed diagram:
-
-![Detailed architecture](./sepformer_detailed_structure.png)
-
 ### Encoder
 
 - The encoder takes in a time-domain mixture-signal (to represent mixed source, raw audio), and uses a representation similar to a short-time Fourier transform using a single convolutional layer:
@@ -38,7 +34,10 @@ A more detailed diagram:
 
 - The encoder is an essential part because self-attention has quadratic complexity with respect to the length of the input vector, so a more efficient data representation is needed.
 
+- More specifically, it is based on 256 convolutional filters with a kernel size of 16 samples and a stride factor of 8 samples (The same kernel size and stride factor as the decoder).
+
 ### Masking Network
+![Detailed architecture](./sepformer_detailed_structure.png)
 
 - The masking network is fed with this encoded representation (previously denoted <math>h</math>) and estimates a mask for each of the speakers in the mixture
 
@@ -53,11 +52,15 @@ A more detailed diagram:
 
 - The OverlapAdd block practically undoes the chunking operation
 
+- In the best models, the SepFormer masking network processes chunks of size <math>C</math> = 250 with a 50% overlap between them and employs <math>K</math> = 8 layers of transformers in both the IntraTransformer and InterTransformer blocks. The IntraT-InterT dual-path processing pipeline is repeated N = 2 times. 8 parallel attention heads were used, and 1024-dimensional feedforward networks used within each transformer layer.
+
 ### Decoder
 
 - Simply uses a transposed CNN layer with the same stride and kernel size of the encoder
 
 - The input to the decoder is the element-wise multiplication between the mask <i class="math">m<sub>k</sub></i> of the source <i class="math">k</i>
+
+The Adam algorithm was used as the model optimizer, with a learning rate of 15×10<sup>-5</sup>. After epoch 65 (or epoch 100 with dynamic mixing), the learning rate is halved if no improvement of the validation performance is observed after 3 consecutive epochs (or 5 epochs with dynamic mixing). During training, a batch size of 1 was used. The system is trained for a maximum of 200 epochs.
 
 ## Data Processing
 
@@ -69,16 +72,30 @@ WSJ0-2mix and WSJ0-3mix datasets, 30 hours of train data, 10 hours of validation
 
 In the WSJ0-2mix and WSJ0-3mix datasets, mixtures of two speakers and three speakers are created by randomly mixing utterances in the WSJ0 corpus of machine-read Wall Street Journal news text. The waveforms are sampled at 8 kHz
 
-SepFormer achieves an SI-SNRi of 22.3 dB on the WSJ0-2mix dataset and SOTA performance of 19.5 dB SI-SNRi on the WSJ0-3mix dataset.
+### Data Augmentation
+
+The authors explored the use of dynamic mixing data augmentation, consisting of the creation of new mixtures from single speaker sources. Also, they expanded this powerful technique by applying a random speed perturbation before mixing them. The speed randomly changes between 95% and 105% the original speed.
 
 ## Evaluation Metrics & Performance
 
 - Processes all time steps in parallel and still achieves competitive performance when downsampling the encoded representation by a factor of 8
 
+On the WSJ0-2mix dataset, SepFormer achieves an SI-SNR improvement of 22.3 dB and a Signal-to-Distortion Ratio improvement of 22.4 dB on the test-set with dynamic mixing.
+
+![Results on the WSJ0-2mix dataset](./sepformer_results_on_wsj0-2mix_dataset.png)
+
+SepFormer obtains state-of-the-art performance with an SI-SNRi of 19.5 dB and an SDRi of 19.7 dB
+
+![Results on the WSJ0-3mix dataset](./sepformer_results_on_wsj0-3mix_dataset.png)
+
+A great advantage of SepFormer over other RNN-based systems is the possibility to parallelize the computations over different time steps, leading to faster training and inference.
+
 ## Tools & Libraries 
+
+The exact tools or libraries used to build SepFormer are not specified and are not necessary as there is enough information to replicate the model with any appropriate platform. Presumably, it is built with Python and the PyTorch library by analyzing its dependencies.
 
 ## Additional Resources
 
-SepFormer presentation for ICASSP 2021 https://www.youtube.com/watch?v=S5ZTc5jmpfI
-
 SepFormer Paper: "Attention is all you need in speech separation" https://arxiv.org/pdf/2010.13154.pdf
+
+SepFormer presentation for ICASSP 2021 https://www.youtube.com/watch?v=S5ZTc5jmpfI
