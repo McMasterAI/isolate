@@ -1,4 +1,4 @@
-# Isolate - Acapella Extraction
+# Isolate - Audio Source Separation
 
 ## About the Project
 
