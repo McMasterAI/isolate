@@ -7,11 +7,28 @@
 This model is built off of the [U-Net](https://en.wikipedia.org/wiki/U-Net) architecture.
 
 - CNN
-- An *encoder*, followed by a *decoder*.
-- Encoder
+  - An *encoder*, followed by a *decoder*.
+
+---
+
+- Encoder (Contractive)
   - Successive downsampling to encode the input into feature representations of the original input.
-- Decoder
+  - Convolutional layers followed by ReLU layers (activation function).
+
+
+![Contractive](./images/contractive.gif)
+
+---
+
+- Decoder (Expansive)
   - Project the features back into a longer tensor (upscale).
+  -  Utilizes up-convolutions/deconvolutional Layers.
+  -  Also uses catenation layers.
+  -  Projects the extracted features back to the original size.
+
+![Expansive](./images/expansive.gif)
+
+
 -  What is the purpose of this method?
    -  To create a full size output generated from the features learned from the input.
 
